@@ -1,0 +1,44 @@
+<html>
+<head>
+<meta charset="utf-8" />
+<script 
+src="https://ajax.googleapis.com/ajax/libs/threejs/r84/three.min.js">
+</script>
+<script>
+        window.addEventListener('load', init);
+        function init() {
+            const width = screen.width;
+            const height = screen.height;
+            const renderer = new THREE.WebGLRenderer({
+                canvas: document.querySelector('#myCanvas')
+            });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(width, height);
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(45, width / height);
+            camera.position.set(0, 0, +1000);
+            const geometry = new THREE.BoxGeometry(400, 400, 400);
+            const material = new THREE.MeshNormalMaterial();
+            const box = new THREE.Mesh(geometry, material);
+            scene.add(box);
+            animate();
+            function animate() {
+
+                box.rotation.x += 0.005;
+                box.rotation.y += 0.006;
+                renderer.render(scene, camera);
+                requestAnimationFrame(animate);
+            }
+        }       
+</script>
+<style>
+* {
+    padding: 0;
+    margin: 0;
+}
+</style>
+</head >
+<body >
+<canvas id="myCanvas"></canvas >
+</body >
+</html >
