@@ -191,16 +191,16 @@
 
     // Create a rounded box geometry (RoundedBox equivalent)
     const cubeRadius = 1.5
-    const roundedBoxGeometry = new THREE.RoundedBoxGeometry(cubeRadius, cubeRadius, cubeRadius, 10, 0.1);  // width, height, depth, segments, radius of corner curvature
+    const roundedBoxGeometry = new THREE.RoundedBoxGeometry(cubeRadius, cubeRadius, cubeRadius, 10, 0.05);  // width, height, depth, segments, radius of corner curvature
     const roundedBoxMaterial = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,            // Cube color
-      roughness: 0.1,             // Smoothness of the surface
+      roughness: 0,               // Smoothness of the surface
       metalness: 0.0,             // Non-metallic surface
       transmission: 1.0,          // Fully transparent like glass
       opacity: 0.5,               // Semi-transparent
       transparent: true,          // Allow transparency
       ior: 1.5,                   // Index of refraction (for glass-like effect)
-      thickness: 0.5,             // Simulate glass thickness
+      thickness: 0.2,             // Simulate glass thickness
     });
 
     const roundedBox = new THREE.Mesh(roundedBoxGeometry, roundedBoxMaterial);
