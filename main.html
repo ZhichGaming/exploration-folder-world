@@ -177,6 +177,10 @@
   </style>
 </head>
 <body>
+  <script>
+    let bgm = new Audio("https://files.catbox.moe/izl82x.mp3");
+    bgm.loop = true;
+  </script>
   <div id="start-container" class="start-container">
     <div id="start-cover" class="start-cover"></div>
     <div class="circle-container">
@@ -216,6 +220,8 @@
           const startCoverElement = document.getElementById("start-container")
           // Expand the button, dissappear the cover
           button.classList.add("expanding-button")
+
+          bgm.play();
 
           button.addEventListener("animationend", function() {
             startCoverElement.classList.add("dissappearing-circle")
