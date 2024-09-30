@@ -511,10 +511,103 @@
     light.position.set(-5, 5, 2);
     scene.add(light);
 
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
     // Add a light source
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.position.set(5, 5, 5).normalize();
     scene.add(dirLight);
+
+    // inspiration: https://codepen.io/vcomics/pen/aGmoae?editors=1010
+    let color = 0xffffff;
+
+    // scene.background = new THREE.Color(color);
+    scene.fog = new THREE.Fog(color, 10, 16);
+
+    // let gridHelper = new THREE.GridHelper(60, 120, 0x000000, 0x000000);
+    // gridHelper.position.y = -1;
+    // scene.add(gridHelper);
+
+    function mathRandom(num = 8) {
+      var numValue = - Math.random() * num + Math.random() * num;
+      return numValue;
+    };
+
+    var createCarPos = true;
+
+    var createCars = function(cScale = 2, cPos = 20, cColor = 0xffffff) {
+      var cMat = new THREE.MeshToonMaterial({color:cColor, side:THREE.DoubleSide});
+      var cGeo = new THREE.BoxGeometry(1, cScale/40, cScale/40);
+      var cElem = new THREE.Mesh(cGeo, cMat);
+      var cAmp = 3;
+      
+      if (createCarPos) {
+        createCarPos = false;
+        cElem.position.x = -cPos;
+        cElem.position.z = (mathRandom(cAmp));
+
+        createjs.Tween.get(cElem.position, { loop: true })
+          .to({ x: cPos }, 3000, createjs.Ease.getPowInOut(1))
+          .wait(mathRandom(3000))
+          .to({ x: -cPos }, 3000, createjs.Ease.getPowInOut(1))
+          .wait(mathRandom(3000));
+      } else {
+        createCarPos = true;
+        cElem.position.x = (mathRandom(cAmp));
+        cElem.position.z = -cPos;
+        cElem.rotation.y = 90 * Math.PI / 180;
+      
+        createjs.Tween.get(cElem.position, { loop: true })
+          .to({ z: cPos }, 5000, createjs.Ease.getPowInOut(1))
+          .wait(mathRandom(3000))
+          .to({ z: -cPos }, 5000, createjs.Ease.getPowInOut(1))
+          .wait(mathRandom(3000));
+      };
+      cElem.receiveShadow = true;
+      cElem.castShadow = true;
+      cElem.position.y = Math.abs(mathRandom(5));
+      scene.add(cElem);
+    };
+
+    var generateLines = function() {
+      for (var i = 0; i<30; i++) {
+        createCars(0.1, 20);
+      };
+    };
+
+    generateLines();
+
+    var smoke = new THREE.Object3D();
+
+    var gmaterial = new THREE.MeshToonMaterial({color:0xffffff, side:THREE.DoubleSide});
+    var gparticular = new THREE.CircleGeometry(0.01, 3);
+    var aparticular = 5;
+    
+    for (var h = 1; h<300; h++) {
+      var particular = new THREE.Mesh(gparticular, gmaterial);
+      particular.position.set(mathRandom(aparticular), mathRandom(aparticular),mathRandom(aparticular));
+      particular.rotation.set(mathRandom(),mathRandom(),mathRandom());
+      smoke.add(particular);
+    };
+
+    smoke.position.y = 2;
+
+    scene.add(smoke);
+    
+    // var pmaterial = new THREE.MeshPhongMaterial({
+    //   color:0x000000,
+    //   side:THREE.DoubleSide,
+    //   opacity:0.9,
+    //   transparent:true});
+    // var pgeometry = new THREE.PlaneGeometry(60,60);
+    // var pelement = new THREE.Mesh(pgeometry, pmaterial);
+    // pelement.rotation.x = -90 * Math.PI / 180;
+    // pelement.position.y = -1;
+    // pelement.receiveShadow = true;
+    // //pelement.material.emissive.setHex(0xFFFFFF + Math.random() * 100000);
+
+    // scene.add(pelement);
 
     // Create a rounded box geometry (RoundedBox equivalent)
     const cubeRadius = 1.5
@@ -615,6 +708,9 @@
       // Rotate the box
       roundedBox.rotation.y = Math.sin(clock.getElapsedTime() * 1) * 0.1;
       roundedBox.position.y = Math.sin(clock.getElapsedTime() * 2) * 0.1;
+
+      smoke.rotation.y += 0.01;
+      smoke.rotation.x += 0.01;
 
       // Render the scene
       renderer.render(scene, camera);
