@@ -794,8 +794,8 @@
       roundedBox.rotation.y = Math.sin(clock.getElapsedTime() * 1) * 0.1;
       roundedBox.position.y = Math.sin(clock.getElapsedTime() * 2) * 0.1;
 
-      smoke.rotation.y += 0.01;
-      smoke.rotation.x += 0.01;
+      smoke.rotation.y += 0.001;
+      smoke.rotation.x += 0.001;
 
       // Render the scene
       renderer.render(scene, camera);
