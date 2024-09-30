@@ -222,6 +222,9 @@
     .team-section {
       margin-left: 20px;
       /* width: 700px; */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .member-intro {
@@ -387,31 +390,35 @@
         <p>Notre projet est de créer un site web interactif qui présente la Chine, un pays qui a une histoire riche et une culture unique.</p>
       </div>
       <div class="team-section">
-        <div class="member-desc">
-          <div id="alex-intro" class="member-intro">
-            <div class="member-content">
-              <img src="https://i.imgur.com/btFJzGS.png" alt="Alex Hanwen Qiu" height="200" class="member-image">
-              <p id="alex-desc" class="member-desc">Alex Hanwen Qiu est un étudiant de 12e année au Collège Jean de la Mennais. Il est passionné par la programmation et l'ingénierie logicielle.</p>
+        <div style="border-left:1px solid #ffffff50;margin-right: 20px;height: 300px;"></div>
+        <div class="team-content">
+          <div class="member-desc">
+            <div id="alex-intro" class="member-intro">
+              <div class="member-content">
+                <img src="https://i.imgur.com/btFJzGS.png" alt="Alex Hanwen Qiu" height="200" class="member-image">
+                <p id="alex-desc" class="member-desc">Alex Hanwen Qiu est un étudiant de 12e année au Collège Jean de la Mennais. Il est passionné par la programmation et l'ingénierie logicielle.</p>
+              </div>
+            </div>
+            <div id="hanyu-intro" class="member-intro hidden displaced-hidden">
+              <div class="member-content">
+                <img src="https://i.imgur.com/saS4c0D.gif" alt="Hanyu Tian" height="200" class="member-image">
+                <p id="hanyu-desc" class="member-desc">Hanyu Tian est un étudiant de 12e année au Collège Jean de la Mennais. Il est passionné par la programmation et l'ingénierie logicielle.</p>
+              </div>
+            </div>
+            <div id="zhich-intro" class="member-intro hidden displaced-hidden">
+              <div class="member-content">
+                <img src="https://i.imgur.com/JOA4pjf.png" alt="Zhi Cheng Ma" height="200" class="member-image">
+                <p id="zhich-desc" class="member-desc">Zhi Cheng Ma est un étudiant de 12e année au Collège Jean de la Mennais. Il est passionné par la programmation et l'ingénierie logicielle.</p>
+              </div>
             </div>
           </div>
-          <div id="hanyu-intro" class="member-intro hidden displaced-hidden">
-            <div class="member-content">
-              <img src="https://i.imgur.com/saS4c0D.gif" alt="Hanyu Tian" height="200" class="member-image">
-              <p id="hanyu-desc" class="member-desc">Hanyu Tian est un étudiant de 12e année au Collège Jean de la Mennais. Il est passionné par la programmation et l'ingénierie logicielle.</p>
-            </div>
-          </div>
-          <div id="zhich-intro" class="member-intro hidden displaced-hidden">
-            <div class="member-content">
-              <img src="https://i.imgur.com/JOA4pjf.png" alt="Zhi Cheng Ma" height="200" class="member-image">
-              <p id="zhich-desc" class="member-desc">Zhi Cheng Ma est un étudiant de 12e année au Collège Jean de la Mennais. Il est passionné par la programmation et l'ingénierie logicielle.</p>
-            </div>
+          <div class="member-selector">
+            <button id="alex" class="member-button selected-member" onclick="selectMember('alex')">Alex Hanwen Qiu</button>
+            <button id="hanyu" class="member-button" onclick="selectMember('hanyu')">Hanyu Tian</button>
+            <button id="zhich" class="member-button" onclick="selectMember('zhich')">Zhi Cheng Ma</button>
           </div>
         </div>
-        <div class="member-selector">
-          <button id="alex" class="member-button selected-member" onclick="selectMember('alex')">Alex Hanwen Qiu</button>
-          <button id="hanyu" class="member-button" onclick="selectMember('hanyu')">Hanyu Tian</button>
-          <button id="zhich" class="member-button" onclick="selectMember('zhich')">Zhi Cheng Ma</button>
-        </div>
+        
       </div>
     </div>
   </div>
