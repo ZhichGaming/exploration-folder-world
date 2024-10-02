@@ -496,7 +496,6 @@
             <button id="zhich" class="member-button" onclick="selectMember('zhich')">Zhi Cheng Ma</button>
           </div>
         </div>
-        
       </div>
     </div>
   </div>
@@ -565,9 +564,6 @@
     if (!window.WebGLRenderingContext) {
       alert('Your browser does not support WebGL');
     }
-    // const canvasElement = document.getElementById("main-canvas");
-    // canvasElement.width = window.innerWidth;
-    // canvasElement.height = window.innerHeight;
 
     // Create the scene
     const scene = new THREE.Scene();
@@ -591,6 +587,19 @@
     controls.enableDamping = true;
     controls.dampingFactor = 0.1;
 
+    // Add a skybox
+    const geometry = new THREE.SphereGeometry( 5, 60, 40 );
+    // invert the geometry on the x-axis so that all of the faces point inward
+    geometry.scale( - 1, 1, 1 );
+
+    const texture = new THREE.TextureLoader().load( 'https://i.imgur.com/LzIrSrc.jpeg' );
+    texture.colorSpace = THREE.SRGBColorSpace;
+    const material = new THREE.MeshBasicMaterial( { map: texture } );
+
+    const mesh = new THREE.Mesh( geometry, material );
+
+    scene.add( mesh );
+
     // Add light (RandomizedLight equivalent)
     const light = new THREE.PointLight(0xadd8e6, 1, 100);
     light.position.set(-5, 5, 2);
@@ -607,12 +616,8 @@
     // inspiration: https://codepen.io/vcomics/pen/aGmoae?editors=1010
     let color = 0xffffff;
 
-    // scene.background = new THREE.Color(color);
     scene.fog = new THREE.Fog(color, 10, 16);
 
-    // let gridHelper = new THREE.GridHelper(60, 120, 0x000000, 0x000000);
-    // gridHelper.position.y = -1;
-    // scene.add(gridHelper);
 
     function mathRandom(num = 8) {
       var numValue = - Math.random() * num + Math.random() * num;
@@ -679,64 +684,6 @@
     smoke.position.y = 2;
 
     scene.add(smoke);
-    
-    // var pmaterial = new THREE.MeshPhongMaterial({
-    //   color:0x000000,
-    //   side:THREE.DoubleSide,
-    //   opacity:0.9,
-    //   transparent:true});
-    // var pgeometry = new THREE.PlaneGeometry(60,60);
-    // var pelement = new THREE.Mesh(pgeometry, pmaterial);
-    // pelement.rotation.x = -90 * Math.PI / 180;
-    // pelement.position.y = -1;
-    // pelement.receiveShadow = true;
-    // //pelement.material.emissive.setHex(0xFFFFFF + Math.random() * 100000);
-
-    // scene.add(pelement);
-
-    // Create a rounded box geometry (RoundedBox equivalent)
-    const cubeRadius = 1.5
-    const roundedBoxGeometry = new THREE.RoundedBoxGeometry(cubeRadius, cubeRadius, cubeRadius, 10, 0.05);  // width, height, depth, segments, radius of corner curvature
-    const roundedBoxMaterial = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,            // Cube color
-      roughness: 0,               // Smoothness of the surface
-      metalness: 0.0,             // Non-metallic surface
-      transmission: 1.0,          // Fully transparent like glass
-      opacity: 0.5,               // Semi-transparent
-      transparent: true,          // Allow transparency
-      ior: 1.5,                   // Index of refraction (for glass-like effect)
-      thickness: 0.2,             // Simulate glass thickness
-    });
-
-    const roundedBox = new THREE.Mesh(roundedBoxGeometry, roundedBoxMaterial);
-    roundedBox.castShadow = true;
-    scene.add(roundedBox);
-
-    const glbLink = "https://files.catbox.moe/hatd9t.glb";
-    const loader = new THREE.GLTFLoader();
-
-    let mixer = undefined
-
-    loader.load(glbLink, function(gltf) {
-      const model = gltf.scene;
-      const scale = 0.02
-      model.scale.set(scale, scale, scale);
-      model.position.set(0, 0.5, 0);
-
-      // Create an AnimationMixer, and get the list of AnimationClip instances
-      mixer = new THREE.AnimationMixer( model );
-
-      // Play a specific animation
-      const action = mixer.clipAction( gltf.animations[0], model );
-      action.play();
-
-      // Play all animations
-      gltf.animations.forEach( function ( clip ) {
-        mixer.clipAction( clip ).play();
-      } );
-      
-      roundedBox.add(model);
-    });
 
     // Environment map (HDR texture)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -786,13 +733,6 @@
 
       // Update controls
       controls.update();
-
-      // Update animation
-      mixer?.update( clock.getDelta() );
-
-      // Rotate the box
-      roundedBox.rotation.y = Math.sin(clock.getElapsedTime() * 1) * 0.1;
-      roundedBox.position.y = Math.sin(clock.getElapsedTime() * 2) * 0.1;
 
       smoke.rotation.y += 0.001;
       smoke.rotation.x += 0.001;
