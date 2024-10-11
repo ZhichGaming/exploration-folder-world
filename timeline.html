@@ -41,6 +41,21 @@
             height: 100%;
             flex: 1 1 auto;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            font-family: "Playfair Display", serif;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .left-area {
+            text-align: left;
+        }
+
+        .right-area {
+            text-align: right;
+            justify-content: flex-end;
         }
 
         .background-image {
@@ -81,13 +96,13 @@
         <div id="events-container" class="events-container">
             <div id="event-model" class="event">
                 <img class="background-image" src="https://picsum.photos/1600/900">
-                <div class="navigation-area left-area" onclick="clickLeft()"></div>
+                <div id="left-area" class="navigation-area left-area" onclick="clickLeft()"></div>
                 <div class="info-area">                    
                     <p class="title">HEY, THIS IS A TITLE</p>
                     <p class="year">1600</p>
                     <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In porttitor malesuada neque, ut aliquam neque. Morbi pretium elementum nisi at interdum. Ut dignissim blandit bibendum. Phasellus commodo mi ut ante scelerisque egestas. Sed non nulla ac nunc dignissim semper non sit amet magna. Curabitur vitae nibh eget ipsum feugiat feugiat non in est. Donec at ex suscipit velit congue faucibus egestas nec lectus. Cras in pretium nibh. Cras tellus mi, hendrerit sit amet tincidunt sit amet, gravida nec dui. Nunc eget orci non ex aliquam elementum nec a turpis. Quisque vel aliquam sapien. Nam in rutrum erat, nec laoreet est. Duis congue lorem sit amet interdum viverra. In posuere elementum nisl eget viverra.</p>
                 </div>
-                <div class="navigation-area right-area" onclick="clickRight()"></div>
+                <div id="right-area" class="navigation-area right-area" onclick="clickRight()"></div>
             </div>
         </div>
     </div>
@@ -110,6 +125,13 @@
         const eventModel = document.getElementById("event-model");
         const eventsContainer = document.getElementById("events-container");
 
+        let currentEventIndex = 0;
+
+        function getNextEventIndex(by = 1) {
+            const newIndex = currentEventIndex + by;
+            return (newIndex < 0 ? newIndex + events.length : newIndex) % events.length;
+        }
+
         function setEvent(eventIndex) {
             const event = events[eventIndex];
 
@@ -122,25 +144,20 @@
             year.innerText = event.date.getFullYear();
             description.innerText = event.description;
             backgroundImage.src = event.backgroundURL;
+
+            document.getElementById("left-area").innerText = "< " + events[getNextEventIndex(-1)].date.getFullYear();
+            document.getElementById("right-area").innerText = events[getNextEventIndex()].date.getFullYear() + " >";
         }
 
         setEvent(0);
 
-        let currentEventIndex = 0;
-
         function clickLeft() {
-            currentEventIndex--;
-            if (currentEventIndex < 0) {
-                currentEventIndex = events.length - 1;
-            }
+            currentEventIndex = getNextEventIndex(-1);
             setEvent(currentEventIndex);
         }
 
         function clickRight() {
-            currentEventIndex++;
-            if (currentEventIndex >= events.length) {
-                currentEventIndex = 0;
-            }
+            currentEventIndex = getNextEventIndex();
             setEvent(currentEventIndex);
         }
 
