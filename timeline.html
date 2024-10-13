@@ -29,12 +29,37 @@
             display: none;
         }
 
+        .fade-in {
+            animation: fade-in ease-out 0.5s;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
         .event {
             width: 100%;
             height: 100%;
+            position: absolute;
             display: flex;
-            background-color: #00000090;
+            background-color: #313131;
             color: white;
+            transition: all 0.5s ease-in-out;
+            /* transform: translate(0); */
+            /* opacity: 1; */
+        }
+
+        .event-displaced-left {
+            transform: translateX(-100vw);
+        }
+
+        .event-displaced-right {
+            transform: translateX(100vw);
         }
 
         .navigation-area {
@@ -61,9 +86,10 @@
         .background-image {
             width: 100%;
             height: 100%;
-            opacity: 0.8;
+            opacity: 0.2;
             position: absolute;
-            z-index: -1;
+            pointer-events: none;
+            /* z-index: -1; */
         }
 
         .info-area {
@@ -94,7 +120,7 @@
 <body>
     <div class="root">
         <div id="events-container" class="events-container">
-            <div id="event-model" class="event">
+            <div id="active-event" class="event">
                 <img class="background-image" src="https://picsum.photos/1600/900">
                 <div id="left-area" class="navigation-area left-area" onclick="clickLeft()"></div>
                 <div class="info-area">                    
@@ -122,7 +148,7 @@
             }
         ]
 
-        const eventModel = document.getElementById("event-model");
+        let activeEvent = document.getElementById("active-event");
         const eventsContainer = document.getElementById("events-container");
 
         let currentEventIndex = 0;
@@ -135,33 +161,63 @@
         function setEvent(eventIndex) {
             const event = events[eventIndex];
 
-            const title = eventModel.querySelector(".title");
-            const year = eventModel.querySelector(".year");
-            const description = eventModel.querySelector(".description");
-            const backgroundImage = eventModel.querySelector(".background-image");
+            const title = activeEvent.querySelector(".title");
+            const year = activeEvent.querySelector(".year");
+            const description = activeEvent.querySelector(".description");
+            const backgroundImage = activeEvent.querySelector(".background-image");
 
             title.innerText = event.title;
             year.innerText = event.date.getFullYear();
             description.innerText = event.description;
             backgroundImage.src = event.backgroundURL;
 
-            document.getElementById("left-area").innerText = "< " + events[getNextEventIndex(-1)].date.getFullYear();
-            document.getElementById("right-area").innerText = events[getNextEventIndex()].date.getFullYear() + " >";
+            activeEvent.querySelector("#left-area").innerText = "< " + events[getNextEventIndex(-1)].date.getFullYear();
+            activeEvent.querySelector("#right-area").innerText = events[getNextEventIndex()].date.getFullYear() + " >";
         }
 
         setEvent(0);
 
-        function clickLeft() {
-            currentEventIndex = getNextEventIndex(-1);
+        function getClonedEvent() {
+            const newEventElement = activeEvent.cloneNode(true);
+            newEventElement.classList.add("no-opacity")
+            return newEventElement;
+        }
+
+        function changeActiveEvent(newEventElement) {
+            activeEvent.removeAttribute("id")
+
+            const previousActiveEvent = activeEvent;
+            activeEvent = document.getElementById("active-event")
+            
             setEvent(currentEventIndex);
+
+            newEventElement.classList.add("fade-in");
+
+            previousActiveEvent.addEventListener("transitionend", () => {
+                previousActiveEvent.remove();
+            })
+        }
+
+        function clickLeft() {
+            currentEventIndex = getNextEventIndex(-1);            
+            const newEventElement = getClonedEvent();
+
+            eventsContainer.appendChild(newEventElement)
+
+            activeEvent.classList.add("event-displaced-right")
+            changeActiveEvent(newEventElement);
         }
 
         function clickRight() {
             currentEventIndex = getNextEventIndex();
-            setEvent(currentEventIndex);
+
+            const newEventElement = getClonedEvent();
+
+            eventsContainer.appendChild(newEventElement)
+
+            activeEvent.classList.add("event-displaced-left")
+            changeActiveEvent(newEventElement);
         }
-
-
     </script>
 </body>
 </html>
