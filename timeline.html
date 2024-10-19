@@ -15,6 +15,9 @@
         .root {
             width: 100vw;
             height: 100vh;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
         }
 
         .events-container {
@@ -118,12 +121,12 @@
 
         .toc {
             position: fixed;
-            width: 100vw;
-            height: 100vh;
+            /* width: 100vw; */
+            /* height: 95vh; */
+            bottom: 50px;
             display: flex;
             justify-content: center;
             align-items: end;
-            margin-bottom: 20px;
         }
 
         .toc-circle {
@@ -131,10 +134,12 @@
             height: 20px;
             border-radius: 50%;
             border: 2px solid white;
-            /* background-color: white; */
+            display: flex;
             cursor: pointer;
-            /* margin: 10px; */
+            justify-content: center;
+            white-space: nowrap;
             transition: background-color 0.2s;
+            overflow: visible;
         }
 
         .toc-circle:hover {
@@ -143,6 +148,15 @@
 
         .toc-circle-selected {
             background-color: white;
+        }
+
+        .toc-date {
+            transform: translateY(15px);
+            text-align: center;
+            color: white;
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 200;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -206,12 +220,14 @@
             activeEvent.querySelector("#left-area").innerText = "< " + events[getNextEventIndex(-1)].date.getFullYear();
             activeEvent.querySelector("#right-area").innerText = events[getNextEventIndex()].date.getFullYear() + " >";
 
-            if (document.getElementById("toc").children.length > 0) {
-                document.getElementById("toc").children[currentEventIndex].classList.add("toc-circle-selected");
+            for (let index = 0; index < document.getElementById("toc").children.length; index++) {
+                const tocItem = document.getElementById("toc").children[index]
 
-                document.getElementById("toc").children.forEach((tocItem, index) => {
-                    if (index !== currentEventIndex) tocItem.classList.remove("toc-circle-selected");
-                })
+                tocItem.classList.remove("toc-circle-selected");
+            }
+
+            if (document.getElementById("toc").children.length > 0) {
+                document.getElementById("toc").children[currentEventIndex*2].classList.add("toc-circle-selected");
             }
         }
 
@@ -223,16 +239,23 @@
                 // tocItem.innerText = event.date.getFullYear();
                 tocItem.classList.add("toc-circle")
 
+                const dateItem = document.createElement("p");
+                dateItem.innerText = event.date.getFullYear();
+                dateItem.classList.add("toc-date")
+
+                tocItem.appendChild(dateItem)
+
                 tocItem.addEventListener("click", () => {
                     if (index === currentEventIndex) return;
 
-                    currentEventIndex = index;
                     const newEventElement = getClonedEvent();
 
                     eventsContainer.appendChild(newEventElement)
 
                     if (index < currentEventIndex) activeEvent.classList.add("event-displaced-right")
                     else if (index > currentEventIndex) activeEvent.classList.add("event-displaced-left")
+
+                    currentEventIndex = index;
 
                     changeActiveEvent(newEventElement);
                 })
