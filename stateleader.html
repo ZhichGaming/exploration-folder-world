@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/RGBELoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/pmrem/PMREMGenerator.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/geometries/RoundedBoxGeometry.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tweenjs@1.0.2/lib/tweenjs.min.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      /* background-color: #f0f0f0; */ /* Apparently -1 z-index puts the element beneath the body */
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .hidden {
+      display: none;
+      visibility: hidden;
+    }
+
+    .main-canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      cursor: grab;
+    }
+
+    .main-canvas:active {
+      cursor: grabbing;
+    }
+
+    .background-canvas {
+      z-index: -1;
+    }
+
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      text-align: center;
+      transition: all 1s ease-in-out;
+    }
+
+    .displaced-hidden {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    
+    .title {
+      color: white;
+      font-size: 6em;
+      text-align: center;
+      font-family: "Playfair Display", serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+      margin: 0;
+    }
+
+    .title-2 {
+      color: white;
+      font-size: 3em;
+      font-family: "Playfair Display", serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+      margin: 0;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    let bgm = new Audio("https://files.catbox.moe/izl82x.mp3");
+    bgm.loop = true;
+    bgm.volume = 0.5;
+
+    function selectMember(member) {
+      const memberButtons = document.querySelectorAll(".member-button");
+      memberButtons.forEach(button => {
+        button.classList.remove("selected-member");
+      });
+
+      const memberDescs = document.querySelectorAll(".member-intro");
+      memberDescs.forEach(desc => {
+        desc.classList.add("hidden");
+        desc.classList.add("displaced-hidden");
+      });
+
+      const selectedButton = document.getElementById(member);
+      selectedButton.classList.add("selected-member");
+
+      const selectedDesc = document.getElementById(member + "-intro");
+      selectedDesc.classList.remove("hidden");
+      selectedDesc.classList.remove("displaced-hidden");
+    }
+  </script>
+  <div id="main-container" class="main-container">
+    
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      
+    });
+
+    if (!window.WebGLRenderingContext) {
+      alert('Your browser does not support WebGL');
+    }
+
+    // Create the scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x100b0b);
+
+    // Set up the camera
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(5, 2, 0);
+
+    // Create the renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+    renderer.domElement.classList.add("main-canvas")
+    renderer.domElement.classList.add("background-canvas")
+    renderer.domElement.id = "main-canvas"
+    document.body.appendChild(renderer.domElement);
+
+    // Add orbit controls
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.1;
+
+    // Add a skybox
+    const geometry = new THREE.SphereGeometry( 5, 60, 40 );
+    // invert the geometry on the x-axis so that all of the faces point inward
+    geometry.scale( - 1, 1, 1 );
+
+    const texture = new THREE.TextureLoader().load( 'https://i.imgur.com/LzIrSrc.jpeg' );
+    texture.colorSpace = THREE.SRGBColorSpace;
+    const material = new THREE.MeshBasicMaterial( { map: texture } );
+
+    const mesh = new THREE.Mesh( geometry, material );
+
+    scene.add( mesh );
+
+    // Add light (RandomizedLight equivalent)
+    const light = new THREE.PointLight(0xadd8e6, 1, 100);
+    light.position.set(-5, 5, 2);
+    scene.add(light);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+
+    // Add a light source
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(5, 5, 5).normalize();
+    scene.add(dirLight);
+
+    const clock = new THREE.Clock();
+
+    // Render loop
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Update controls
+      controls.update();
+
+      // Render the scene
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Handle window resizing
+    window.addEventListener('resize', () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    });
+  </script>
+</body>
+</html>
