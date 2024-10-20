@@ -36,8 +36,7 @@
     }
 
     .main-canvas {
-      position: absolute;
-      width: 100%;
+      width: 40vw;
       height: 100%;
       top: 0;
       left: 0;
@@ -50,9 +49,10 @@
 
     .main-container {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
+      align-items: stretch;
+      justify-content: space-around;
+      flex-flow: row;
+
       position: absolute;
       width: 100%;
       height: 100%;
@@ -63,31 +63,129 @@
       transition: all 1s ease-in-out;
     }
 
+    .info-container {
+      position: relative;
+      height: 100%;
+      flex-grow: 1;
+      background-color: black;
+      color: white;
+      overflow: scroll;
+      -ms-overflow-style: none;
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .info-subcontainer {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: all 1s ease-in-out;
+    }
+
+    .scroll-buttons {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+    }
+
+    .scroll-button {
+      background-color: black;
+      color: white;
+      border: 1px solid white;
+      padding: 5px 10px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
     .displaced-hidden {
       opacity: 0;
       transform: translateY(-20px);
     }
     
+    .birth-info-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 80%;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .city-picture {
+      width: 50%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2em;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .canvas-container {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    #birthdate {
+      margin-top: 5px;
+      opacity: 0.8;
+      font-size: 0.9em;
+    }
+
+    .functions-list {
+      text-align: left;
+      list-style-type: square;
+      padding-left: 20px;
+      width: 80%;
+      font-size: 0.9em;
+      opacity: 0.8;
+    }
+
+    .leader-basic-info {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+    }
+
+    .leader-name {
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .leader-title {
+      font-size: 0.9em;
+      font-weight: 400;
+      color: white;
+      opacity: 0.6;
+    }
+
     .title {
       color: white;
-      font-size: 6em;
+      font-size: 2em;
       text-align: center;
       font-family: "Playfair Display", serif;
       font-optical-sizing: auto;
       font-weight: 400;
       font-style: normal;
-      margin: 0;
     }
 
     .title-2 {
       color: white;
-      font-size: 3em;
+      font-size: 1.5em;
       font-family: "Playfair Display", serif;
       font-optical-sizing: auto;
       font-weight: 400;
       font-style: normal;
       margin: 0;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+      margin-top: 30px;
     }
   </style>
 </head>
@@ -98,13 +196,91 @@
     bgm.volume = 0.5;
   </script>
   <div id="main-container" class="main-container">
-    <div class="info-container"></div>
-    <canvas id="main-canvas" class="main-canvas"></canvas>
+    <div class="info-container">
+      <div id="personal-info-subcontainer" class="info-subcontainer">
+        <p class="title">Information personnelle</p>
+        <hr style="width: 80%; border: 1px solid white; opacity: 0.5;">
+        <p class="title-2">Lieu de naissance</p>
+        <div class="birth-info-container">
+          <img class="city-picture" src="https://content.r9cdn.net/rimg/dimg/62/28/22c46ab3-city-3286-164709113b2.jpg?crop=true&width=1020&height=498">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d391566.3391962266!2d116.39745889999999!3d39.9388838!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x35f05296e7142cb9%3A0xb9625620af0fa98a!2sBeijing%2C%20China!5e0!3m2!1sen!2sca!4v1729394726560!5m2!1sen!2sca" width="50%" height="200" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <p class="title-2">Date de naissance</p>
+        <p>Né le 15 juin 1953.</p>
+        <p id="birthdate"></p>
+        <p class="title-2">Informations supplémentaires</p>
+        <table>
+          <tr>
+            <td><b>Origine ethnique</b></td>
+            <td>Han chinois</td>
+          </tr>
+          <tr>
+            <td><b>Religion</b></td>
+            <td>Aucune <span style="opacity: 0.5;">(athée)</span></td>
+          </tr>
+          <tr>
+            <td><b>Scolarité</b></td>
+            <td>Université Tsinghua de 1975 à 1979<br><span style="opacity: 0.5;">(génie chimique)</span></td>
+          </tr>
+        </table>
+      </div>
+      <div id="leader-info-subcontainer" class="info-subcontainer">
+        <p class="title">Informations sur le chef d'état</p>
+        <hr style="width: 80%; border: 1px solid white; opacity: 0.5;">
+        <p class="title-2">Rôles</p>
+        <p>Secrétaire général du Comité central du Parti communiste chinois<br>Président de la République populaire de la Chine</p>
+        <p class="title-2">Fonctions (responsabilité et pouvoirs)</p>
+        <ul class="functions-list">
+          <li>Responsable des relations extérieures de la Chine</li>
+          <li>Nommer le Premier Ministre, les ministres, les membres du Conseil d’État</li>
+          <li>Nommer les ambassadeurs dans les pays étrangers</li>
+          <li>Nommer les ministres et tous les présidents, secrétaires et trésoriers des comités législatifs</li>
+          <li>Émettre des Décrets spéciaux présidentiels</li>
+          <li>Déclarer l’état d’urgence</li>
+          <li>Déclarer la guerre</li>
+        </ul>
+        <p class="title-2">Parti politique</p>
+        <p>Parti communiste de la Chine</p>
+        <p class="title-2">Mandat</p>
+        <p>Depuis le 14 mars 2013, jusqu'en Mars 2028</p>
+      </div>
+      <div class="scroll-buttons">
+        <button id="previous-button" class="scroll-button" onclick="scrollGoTo('personal-info-subcontainer')">Précédent</button>
+        <button id="next-button" class="scroll-button" onclick="scrollGoTo('leader-info-subcontainer')">Suivant</button>
+      </div>
+    </div>
+    <div class="canvas-container">
+      <canvas id="main-canvas" class="main-canvas"></canvas>
+      <div class="leader-basic-info">
+        <p class="title leader-name">Xi Jinping</p>
+        <p class="leader-title">Président de la République populaire de Chine</p>
+      </div>
+    </div>
   </div>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
+      function setBirthdate() {
+        const birthdate = new Date(1953, 5, 15);
+
+        const years = new Date().getFullYear() - birthdate.getFullYear();
+        const months = new Date().getMonth() - birthdate.getMonth();
+        const days = new Date().getDate() - birthdate.getDate();
+        const hours = new Date().getHours() - birthdate.getHours();
+        const minutes = new Date().getMinutes() - birthdate.getMinutes();
+        const seconds = new Date().getSeconds() - birthdate.getSeconds();
+
+        document.getElementById("birthdate").innerText = `Il est aujourd'hui âgé de ${years} ans, ${months} mois, ${days} jours, ${hours} heures, ${minutes} minutes et ${seconds} secondes.`;
+      }
       
+      setInterval(setBirthdate, 1000);
+
+      setBirthdate();
     });
+
+    function scrollGoTo(id) {
+      const element = document.getElementById(id);
+      element.scrollIntoView({ behavior: "smooth" });
+    }
 
     if (!window.WebGLRenderingContext) {
       alert('Your browser does not support WebGL');
@@ -115,12 +291,12 @@
     scene.background = new THREE.Color(0x836A61);
 
     // Set up the camera
-    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth * 0.4 / window.innerHeight, 0.1, 100);
     camera.position.set(5, 2, 0);
 
     // Create the renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: document.querySelector('#main-canvas') });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(window.innerWidth * 0.4, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.shadowMap.enabled = true;
 
@@ -144,12 +320,42 @@
 
     const clock = new THREE.Clock();
 
+    // Load the model
+    const loader = new THREE.GLTFLoader();
+    let mixer = undefined;
+
+    loader.load('https://raw.githubusercontent.com/ZhichGaming/exploration-folder-world/main/models/xi_jinping_leader_of_china.glb', (gltf) => {
+      const model = gltf.scene;
+      const scale = 1.2
+      model.scale.set(scale, scale, scale);
+      model.position.set(0, -2, 0);
+      model.rotation.y = Math.PI / 2;
+
+      // Create an AnimationMixer, and get the list of AnimationClip instances
+      mixer = new THREE.AnimationMixer( model );
+
+      // Play a specific animation
+      const action = mixer.clipAction( gltf.animations[0], model );
+      action.play();
+
+      // Play all animations
+      gltf.animations.forEach( function ( clip ) {
+        mixer.clipAction( clip ).play();
+      } );
+
+      scene.add(model);
+    });
+
+
     // Render loop
     function animate() {
       requestAnimationFrame(animate);
 
       // Update controls
       controls.update();
+
+      // Update animation
+      mixer?.update( clock.getDelta() );
 
       // Render the scene
       renderer.render(scene, camera);
@@ -159,7 +365,7 @@
 
     // Handle window resizing
     window.addEventListener('resize', () => {
-      const width = window.innerWidth;
+      const width = window.innerWidth * 0.4;
       const height = window.innerHeight;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
