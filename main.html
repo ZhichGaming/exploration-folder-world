@@ -36,6 +36,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      z-index: 3;
     }
 
     .start-cover {
@@ -115,6 +116,14 @@
       height: 100%;
       top: 0;
       left: 0;
+      cursor: grab;
+    }
+
+    .main-canvas:active {
+      cursor: grabbing;
+    }
+
+    .background-canvas {
       z-index: -1;
     }
 
@@ -130,6 +139,7 @@
       left: 0;
       z-index: 1;
       text-align: center;
+      transition: all 1s ease-in-out;
     }
 
     .displaced-hidden {
@@ -332,6 +342,36 @@
       animation-delay: 2.5s;
     }
 
+    .toggle-main-container {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      z-index: 2;
+      cursor: pointer;
+      border-radius: 5px;
+      font-family: "Space Grotesk", sans-serif;
+      padding: 5px;
+    }
+
+    .city-presentation {
+      position: fixed;
+      bottom: 15px;
+      left: 15px;
+      z-index: 2;
+      font-size: 20px;
+      transition: all 1s ease-in-out;
+      color: white;
+    }
+    
+    .city-description {
+      font-size: 20px;
+    }
+
+    .navigation-instruction {
+      opacity: 0.5;
+      font-size: 15px;
+    }
+
     @keyframes drop {
       0% {  
         top: -50%;
@@ -475,19 +515,19 @@
             <div id="alex-intro" class="member-intro">
               <div class="member-content">
                 <img src="https://i.imgur.com/btFJzGS.png" alt="Alex Hanwen Qiu" height="200" class="member-image">
-                <p id="alex-desc" class="member-desc">Alex est un étudiant qui adore les jeux vidéos de toute sorte. Il n'aime pas parler à des filles et ne dort pas en classe.</p>
+                <p id="alex-desc" class="member-desc">Alex est un élève passionné par les jeux vidéo de toute sorte. Que ce soit des RPG ou des FPS, il s'immerge dans le monde virtuel, la plupart du temps en dépit de ses études. Par contre, Alex ne s’endort jamais en classe, même après de longues nuits à jouer.</p>
               </div>
             </div>
             <div id="hanyu-intro" class="member-intro hidden displaced-hidden">
               <div class="member-content">
                 <img src="https://i.imgur.com/saS4c0D.gif" alt="Hanyu Tian" height="200" class="member-image">
-                <p id="hanyu-desc" class="member-desc">Hanyu est un étudiant qui aime la musique. Il a l’horreur d’écrire des textes et dort parfois en classe.</p>
+                <p id="hanyu-desc" class="member-desc">Hanyu est un élève qui adore la musique. Que ce soit en écoutant ou en jouant de la guitare, il adore l’harmonie qui se trouve dans chaque pièce. Cependant, lorsqu’il doit écrire des textes, il perd toute motivation, car la grammaire n’est pas sa force. Le soir, il dort peu et il arrive qu’il prenne une sieste en classe, mais jamais dans le cours de monde contemporain qu’il trouve stimulant!</p>
               </div>
             </div>
             <div id="zhich-intro" class="member-intro hidden displaced-hidden">
               <div class="member-content">
                 <img src="https://i.imgur.com/JOA4pjf.png" alt="Zhi Cheng Ma" height="200" class="member-image">
-                <p id="zhich-desc" class="member-desc">Zhi Cheng est un étudiant avide de programmation. Il n'aime pas socialiser avec les gens et dort souvent en classe.</p>
+                <p id="zhich-desc" class="member-desc">Zhi Cheng est un étudiant avide de programmation, constamment travaillant sur ses nombreux projets et il préfère passer son temps à coder plutôt qu’à interagir avec ses camarades. Cette passion le mène souvent à s’endormir en classe.</p>
               </div>
             </div>
           </div>
@@ -499,6 +539,11 @@
         </div>
       </div>
     </div>
+  </div>
+  <button class="toggle-main-container" onclick="toggleMainContainer()">Mode exploration</button>
+  <div id="presentation" class="city-presentation hidden">
+    <p class="city-description">Cette ville est Shanghai, une des villes les plus peuplées de la Chine. </p>
+    <p class="navigation-instruction">Cliquez puis faites glisser la souris pour regarder autour.</p>
   </div>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -580,6 +625,7 @@
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.shadowMap.enabled = true;
     renderer.domElement.classList.add("main-canvas")
+    renderer.domElement.classList.add("background-canvas")
     renderer.domElement.id = "main-canvas"
     document.body.appendChild(renderer.domElement);
 
@@ -743,6 +789,43 @@
     }
 
     animate();
+
+    let mainContainerHidden = false;
+
+    function toggleMainContainer() {
+      if (mainContainerHidden) {
+        showMainContainer();
+      } else {
+        hideMainContainer();
+      }
+    }
+
+    function showMainContainer() {
+      const mainContainer = document.getElementById("main-container");
+      mainContainer.classList.remove("hidden");
+      mainContainer.classList.remove("displaced-hidden");
+
+      document.getElementById("main-canvas").classList.add("background-canvas")
+
+      document.getElementById("presentation").classList.add("hidden");
+
+      mainContainerHidden = false;
+    }
+
+    function hideMainContainer() {
+      const mainContainer = document.getElementById("main-container");
+      mainContainer.classList.add("displaced-hidden");
+
+      mainContainer.addEventListener("transitionend", function() {
+        mainContainer.classList.add("hidden");
+      }, { once: true });
+
+      document.getElementById("main-canvas").classList.remove("background-canvas")
+
+      document.getElementById("presentation").classList.remove("hidden");
+
+      mainContainerHidden = true;
+    }
 
     // Handle window resizing
     window.addEventListener('resize', () => {
