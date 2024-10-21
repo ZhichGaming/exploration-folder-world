@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/RGBELoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/pmrem/PMREMGenerator.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/geometries/RoundedBoxGeometry.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tweenjs@1.0.2/lib/tweenjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      /* background-color: #f0f0f0; */ /* Apparently -1 z-index puts the element beneath the body */
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .hidden {
+      display: none;
+      visibility: hidden;
+    }
+
+    .main-container {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-around;
+      flex-flow: row;
+
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      text-align: center;
+      transition: all 1s ease-in-out;
+    }
+
+
+    .table-container {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-gap: 15px;
+      /* max-width: 1200px; */
+      width: 100%;
+      background-color: black;
+      padding: 15px;
+    }
+
+    .table-item {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(94, 94, 94, 0.3);
+      transition: transform 0.3s ease;
+      grid-row: span 2;
+      grid-column: span 2;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .center {
+      justify-content: center;
+    }
+
+    .table-item h2, .table-item h3 {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .table-item.large {
+      grid-column: span 4;
+    }
+
+    .table-item.tall {
+      grid-row: span 4;
+    }
+
+    .table-item.short {
+      grid-row: span 1;
+    }
+
+    .table-item.neon {
+      /* border: 2px solid #ff79c6;
+      box-shadow: 0 0 15px #ff79c6, 0 0 30px #ff79c6; */
+      --first-color: #ff6060;
+      --second-color: #ffc068;
+      background: linear-gradient(45deg, var(--first-color), var(--second-color));
+      box-shadow: 0 0 5px var(--first-color), 0 0 30px var(--first-color);
+      background-size: 500%;
+      animation: animateBackground 5s linear infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .table-item:hover {
+      transform: scale(1.02);
+    }
+
+    .beijing-background {
+      justify-content: end;
+    }
+
+    .beijing-background::after {
+      content: "";
+      background: url('https://www.backpackerboy.com/wp-content/uploads/2023/10/Beijing-Skyline.jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.5;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      position: absolute;
+      z-index: -1;  
+    }
+
+    .ccp-background::after {
+      content: "";
+      background: url('https://media.marianne.net/assets/as0yso2GZDWYAUldE.jpg?w=770&h=462&r=fill');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.5;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      position: absolute;
+      z-index: -1;  
+    }
+
+    .populated-cities-chart-container {
+      position: relative;
+      flex-grow: 1;
+    }
+
+    .text-left {
+      text-align: left;
+    }
+
+    .text-secondary {
+      opacity: 0.8;
+    }
+
+    @keyframes animateBackground {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    
+  </script>
+  <div id="main-container" class="main-container">
+    <div class="table-container">
+      <div class="table-item text-left">
+        <p class="text-secondary">Langue officielle</p>
+        <h3>Mandarin standard</h3>
+        <p>0% locuteurs francophones <span class="text-secondary">(100 000 étudiants)</span></p>
+      </div>
+      <div class="table-item tall">
+        <h3>Ethnies principales</h3>
+        <canvas id="races-canvas"></canvas>
+      </div>
+      <div class="table-item ccp-background center">
+        <p>Parti Politique</p>
+        <h2>Parti Communiste Chinois</h2>
+        <p class="text-secondary">Aucun parti d'opposition</p>
+      </div>
+      <div class="table-item tall">
+        <h3>Religions du pays</h3>
+        <canvas id="religions-chart"></canvas>
+      </div>
+      <div class="table-item">
+        <h3>Espérance de vie</h3>
+        <canvas id="life-expectancy-canvas"></canvas>
+      </div>
+      <div class="table-item neon">
+        <h1>Fiche d'informations generale</h1>
+        <!-- <p></p> -->
+      </div>
+      <div class="table-item short text-left">
+        <p class="text-secondary">Régime et idéologie politique</p>
+        <h2>Autoritaire, communisme</h2>
+      </div>
+      <div class="table-item short text-left">
+        <p class="text-secondary">Indice de développement humain (IDH)</p>
+        <h2>0.788 (rang 75)</h2>
+      </div>
+      <div class="table-item short text-left">
+        <p class="text-secondary">Système économique</p>
+        <h2>Économie mixte</h2>
+      </div>
+      <div class="table-item text-left">
+        <h3>Population</h3>
+        <p>1 425 671 352 habitants</p>
+        <div class="populated-cities-chart-container">
+          <canvas id="populated-cities-chart"></canvas>
+        </div>
+      </div>
+      <div class="table-item short text-left">
+        <p class="text-secondary">Forme de gouvernement</p>
+        <h2>République</h2>
+      </div>
+      <div class="table-item short beijing-background">
+        <h2>Beijing</h2>
+        <p>Capitale de la Chine</p>
+      </div>
+      <div class="table-item text-left">
+        <p class="text-secondary">Devise monétaire officielle</p>
+        <h2>Yuan (CNY, ¥)</h2>
+      </div>
+    </div>
+  </div>
+  <script>
+    const populatedCitiesChartElement = document.getElementById('populated-cities-chart');
+
+    new Chart(populatedCitiesChartElement, {
+      type: 'bar',
+      data: {
+        labels: ['Chongqing', 'Shanghai', 'Beijing', 'Chengdu'],
+        datasets: [{
+          label: 'Population (en millions)',
+          data: [31.91, 24.87, 21.86, 21.403],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        maintainAspectRatio: false
+      }
+    });
+
+    const religionsChartElement = document.getElementById('religions-chart');
+
+    new Chart(religionsChartElement, {
+      type: 'doughnut',
+      data: {
+        labels: ['Bouddhisme', 'Athée', 'Taoïsme', 'Autres religions traditionelles', 'Christianisme', 'Islam'],
+        datasets: [{
+          label: 'Religions',
+          data: [33.4, 25.2, 19.6, 17.7, 2.5, 1.6],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    const racesCanvas = document.getElementById("races-canvas");
+
+    new Chart(racesCanvas, {
+      type: 'pie',
+      data: {
+        labels: ['Han', 'Zhuang', 'Uyghur', 'Hui', 'Miao', 'Man', 'Yi', 'Autres'],
+        datasets: [{
+          label: 'Ethnies',
+          data: [91.1098, 1.3801, 0.8352, 0.8070, 0.7851, 0.7394, 0.6973, 14.1343],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    const lifeExpectancyCanvas = document.getElementById('life-expectancy-canvas');
+
+    new Chart(lifeExpectancyCanvas, {
+      type: 'bar',
+      data: {
+        labels: ['Hommes', 'Femmes', 'Moyenne'],
+        datasets: [{
+          label: 'Espérance de vie',
+          data: [76, 81.7, 78.7],
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
