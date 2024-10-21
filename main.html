@@ -351,6 +351,24 @@
       border-radius: 5px;
       font-family: "Space Grotesk", sans-serif;
       padding: 5px;
+      --first-color: #ff6060;
+      --second-color: #ffc068;
+      background: linear-gradient(45deg, var(--first-color), var(--second-color));
+      box-shadow: 0 0 5px var(--first-color), 0 0 30px var(--first-color);
+      background-size: 500%;
+      animation: animateBackground 5s linear infinite;
+    }
+
+    @keyframes animateBackground {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
     }
 
     .city-presentation {
