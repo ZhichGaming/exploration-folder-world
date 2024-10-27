@@ -86,26 +86,77 @@
     }
 
     .info-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      margin: 10px;
       /* width: ; */
-      /* height: 100%; */
+      /* height: 500px; */
+      
+      perspective: 1000px; /* Remove this if you don't want the 3D effect */
+      cursor: pointer;
+    }
+
+    .card-inner {
+      /* margin: 20px; */
+
       background: rgba(255, 255, 255, 0.1);
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      margin: 10px;
+
+      /* display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center; */
+
+      /* position: relative; */
+      display: grid;
+      grid-template-columns: 1fr;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
     }
 
+    /* .info-card:hover {
+      transform: rotateX(10deg) rotateY(10deg);
+    } */
 
+    /* Do an horizontal flip when you move the mouse over the flip box container */
+    .info-card:hover .card-inner {
+      transform: rotateY(10deg);
+    }
+
+    .flipped {
+      transform: rotateY(180deg) !important;
+    }
+
+    .card-front, .card-back {
+      /* position: absolute; */
+
+      grid-row-start: 1;
+      grid-column-start: 1;
+
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden; /* Safari */
+      backface-visibility: hidden;
+    }
+
+    .card-front canvas {
+      padding: 20px;
+      /* background-color: #bbb;
+      color: black; */
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      /* position: absolute;
+      padding: 20px; */
+    }
   </style>
 </head>
 <body>
   <div id="main-container" class="main-container">
     <div class="general-chart-container">
-      <!-- <h1>Fiche Thematique</h1> -->
        <div class="general-chart-containinger">
         <canvas id="general-chart" class="general-chart"></canvas>
        </div>
@@ -114,32 +165,89 @@
     </div>
     <div class="charts-container">
       <div class="info-card">
-        <h2>Densité de population</h2>
-        <canvas id="density"></canvas>
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>Densité de population</h2>
+            <canvas id="density"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>Densité de population</h2>
+            <p>La densité de population est le nombre d'habitants par kilomètre carré. La Chine a une densité de population beaucoup plus élevée que le Canada.</p>
+          </div>
+        </div>
       </div>
       <div class="info-card">
-        <h2>Espérance de vie</h2>
-        <canvas id="expectancy"></canvas>
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>Espérance de vie</h2>
+            <canvas id="expectancy"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>Espérance de vie</h2>
+            <p>L'espérance de vie est le nombre moyen d'années qu'un individu peut s'attendre à vivre. La Chine a une espérance de vie plus faible que le Canada.</p>
+          </div>
+        </div>
+        
       </div>
       <div class="info-card">
-        <h2>Taux de fécondité (enfants/femme)</h2>
-        <canvas id="fecundity"></canvas>
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>Taux de fécondité (enfants/femme)</h2>
+            <canvas id="fecundity"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>Taux de fécondité</h2>
+            <p>Le taux de fécondité est le nombre moyen d'enfants qu'une femme peut s'attendre à avoir. La Chine a un taux de fécondité plus faible que le Canada.</p>
+          </div>
+        </div>
       </div>
       <div class="info-card">
-        <h2>Taux de natalité (par 1000 habitants)</h2>
-        <canvas id="natality"></canvas>
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>Taux de natalité (par 1000 habitants)</h2>
+            <canvas id="natality"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>Taux de natalité</h2>
+            <p>Le taux de natalité est le nombre de naissances pour 1000 habitants. La Chine a un taux de natalité plus élevé que le Canada.</p>
+          </div>
+        </div>
       </div>
       <div class="info-card">
-        <h2>Taux de mortalité (par 1000 habitants)</h2>
-        <canvas id="mortality"></canvas>
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>Taux de mortalité (par 1000 habitants)</h2>
+            <canvas id="mortality"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>Taux de mortalité</h2>
+            <p>Le taux de mortalité est le nombre de décès pour 1000 habitants. La Chine a un taux de mortalité plus élevé que le Canada.</p>
+          </div>
+        </div>
       </div>
       <div class="info-card">
-        <h2>Accroissement naturel</h2>
-        <canvas id="natural"></canvas>
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>Accroissement naturel</h2>
+            <canvas id="natural"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>Accroissement naturel</h2>
+            <p>L'accroissement naturel est la différence entre le taux de natalité et le taux de mortalité. La Chine a un accroissement naturel plus faible que le Canada.</p>
+          </div>
+        </div>
       </div>
       <div class="info-card">
-        <h2>Accroissement migratoire</h2>
-        <canvas id="migratory"></canvas>
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>Accroissement migratoire</h2>
+            <canvas id="migratory"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>Accroissement migratoire</h2>
+            <p>L'accroissement migratoire est la différence entre le nombre d'immigrants et le nombre d'émigrants. La Chine a un accroissement migratoire plus faible que le Canada.</p>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -322,6 +430,14 @@
         }
       }
     });
+
+    const infoCards = document.querySelectorAll('.card-inner');
+
+    for (let card of infoCards) {
+      card.addEventListener('click', () => {
+        card.classList.toggle('flipped');
+      });
+    }
   </script>
 </body>
 </html>
