@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      /* background-color: #f0f0f0; */ /* Apparently -1 z-index puts the element beneath the body */
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .hidden {
+      display: none;
+      visibility: hidden;
+    }
+
+    .main-container {
+      /* display: flex; */
+      /* align-items: stretch; */
+      /* justify-content: space-around; */
+      /* flex-flow: row; */
+
+      position: absolute;
+      width: 100%;
+      /* height: 100%; */
+      top: 0;
+      left: 0;
+      z-index: 1;
+      text-align: center;
+      transition: all 1s ease-in-out;
+      background-color: black;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .general-chart-container {
+      overflow: hidden;
+      padding: 5em 10em;
+      color: white;
+    }
+
+    .general-chart-containinger {
+      position: relative;
+      /* display: flex; */
+      /* width: 100vw; */
+      height: 60vh;
+    }
+
+    /* .general-chart {
+      width: 50vw;
+      height: 50vh;
+    } */
+
+    .general-description {
+      margin-top: 50px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .general-subnote {
+      margin-top: 10px;
+      font-size: small;
+      opacity: 0.7;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .charts-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      padding: 2em 10em;
+    }
+
+    .info-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      /* width: ; */
+      /* height: 100%; */
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      margin: 10px;
+    }
+
+
+  </style>
+</head>
+<body>
+  <div id="main-container" class="main-container">
+    <div class="general-chart-container">
+      <!-- <h1>Fiche Thematique</h1> -->
+       <div class="general-chart-containinger">
+        <canvas id="general-chart" class="general-chart"></canvas>
+       </div>
+      <p class="general-description">Graphique de comparaison entre la Chine et le Canada en pourcentage avec le Canada comme référence (100%). </p>
+      <p class="general-subnote">La densité de population de la Chine est incomparablement grand comparé à celui du Canada, le point est en dehors du graphique.</p>
+    </div>
+    <div class="charts-container">
+      <div class="info-card">
+        <h2>Densité de population</h2>
+        <canvas id="density"></canvas>
+      </div>
+      <div class="info-card">
+        <h2>Espérance de vie</h2>
+        <canvas id="expectancy"></canvas>
+      </div>
+      <div class="info-card">
+        <h2>Taux de fécondité (enfants/femme)</h2>
+        <canvas id="fecundity"></canvas>
+      </div>
+      <div class="info-card">
+        <h2>Taux de natalité (par 1000 habitants)</h2>
+        <canvas id="natality"></canvas>
+      </div>
+      <div class="info-card">
+        <h2>Taux de mortalité (par 1000 habitants)</h2>
+        <canvas id="mortality"></canvas>
+      </div>
+      <div class="info-card">
+        <h2>Accroissement naturel</h2>
+        <canvas id="natural"></canvas>
+      </div>
+      <div class="info-card">
+        <h2>Accroissement migratoire</h2>
+        <canvas id="migratory"></canvas>
+      </div>
+    </div>
+
+  </div>
+  <script>
+    Chart.register(ChartDataLabels);
+
+    const densityElement = document.getElementById('density');
+    const expectancyElement = document.getElementById('expectancy');
+    const fecundityElement = document.getElementById('fecundity');
+    const natalityElement = document.getElementById('natality');
+    const mortalityElement = document.getElementById('mortality');
+    const naturalElement = document.getElementById('natural');
+    const migratoryElement = document.getElementById('migratory');
+
+    const chinaColor = 'rgba(255, 99, 132, 0.2)';
+    const canadaColor = 'rgba(54, 162, 235, 0.2)';
+    const chinaBorderColor = 'rgb(255, 99, 132)';
+    const canadaBorderColor = 'rgb(54, 162, 235)';
+
+    const canadaDensity = [3.98];
+    const canadaExpectancy = [84.2, 81.9, 86.6];
+    const canadaFecundity = [1.58];
+    const canadaNatality = [10];
+    const canadaMortality = [8.2];
+    const canadaNatural = [74726];
+    const canadaMigratory = [368599];
+    
+    const chinaDensity = [148.42];
+    const chinaExpectancy = [78.7, 76, 81.7];
+    const chinaFecundity = [1.55];
+    const chinaNatality = [10.2];
+    const chinaMortality = [7.7];
+    const chinaNatural = [-2944663];
+    const chinaMigratory = [-318992];
+
+    const densityLabels = ['Densité de population (hab/km²)'];
+    const expectancyLabels = ['Espérance moyenne (ans)', 'Espérance hommes (ans)', 'Espérance femmes (ans)'];
+    const fecundityLabels = ['Taux de fécondité (enfants/femme)'];
+    const natalityLabels = ['Taux de natalité (pour 1000 habitants)'];
+    const mortalityLabels = ['Taux de mortalité (pour 1000 habitants)'];
+    const naturalLabels = ['Accroissement naturel (pour 1000 habitants)'];
+    const migratoryLabels = ['Accroissement migratoire (pour 1000 habitants)'];
+
+    const borderWidth = 1;
+
+    function createChart(element, data, labels) {
+      new Chart(element, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Canada (2024)',
+            data: data[0],
+            backgroundColor: [
+              canadaColor,
+            ],
+            borderColor: [
+              canadaBorderColor,
+            ],
+            borderWidth: 1
+          },
+          {
+            label: 'Chine (2024)',
+            data: data[1],
+            backgroundColor: [
+              chinaColor
+            ],
+            borderColor: [
+              chinaBorderColor
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              grid: {
+                color: '#3D3D3D',
+              },
+              ticks: {
+                // color: '#C2C2C2',
+                // backdropColor: '#000000'
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    createChart(densityElement, [canadaDensity, chinaDensity], densityLabels);
+    createChart(expectancyElement, [canadaExpectancy, chinaExpectancy], expectancyLabels);
+    createChart(fecundityElement, [canadaFecundity, chinaFecundity], fecundityLabels);
+    createChart(natalityElement, [canadaNatality, chinaNatality], natalityLabels);
+    createChart(mortalityElement, [canadaMortality, chinaMortality], mortalityLabels);
+    createChart(naturalElement, [canadaNatural, chinaNatural], naturalLabels);
+    createChart(migratoryElement, [canadaMigratory, chinaMigratory], migratoryLabels);
+
+    const canadaRelativeData = [];
+    const chinaRelativeData = [];
+
+    function getRelativeData(canada, china) {
+      const maxElement = Math.max(canada[0], china[0]);
+      const minElement = Math.max(Math.min(canada[0], china[0]), 0);
+
+      // if (canada[0] > china[0]) {
+      //   chinaRelativeData.push((minElement / maxElement).toFixed(2));
+      //   canadaRelativeData.push(1);
+      // } else {
+      //   chinaRelativeData.push(1);
+      //   canadaRelativeData.push((minElement / maxElement).toFixed(2));
+      // }
+      canadaRelativeData.push(100);
+      chinaRelativeData.push((Math.max(china[0] / canada[0], 0) * 100).toFixed(2));
+    }
+
+    console.log(canadaRelativeData);
+    console.log(chinaRelativeData);
+
+    getRelativeData(canadaDensity, chinaDensity);
+    getRelativeData(canadaExpectancy, chinaExpectancy);
+    getRelativeData(canadaFecundity, chinaFecundity);
+    getRelativeData(canadaNatality, chinaNatality);
+    getRelativeData(canadaMortality, chinaMortality);
+    getRelativeData(canadaNatural, chinaNatural);
+    getRelativeData(canadaMigratory, chinaMigratory);
+
+    const generalChartElement = document.getElementById('general-chart');
+
+    new Chart(generalChartElement, {
+      type: 'radar',
+      data: {
+        labels: [
+          "Densité de population",
+          "Espérance de vie",
+          "Taux de fécondité",
+          "Taux de natalité",
+          "Taux de mortalité",
+          "Accroissement naturel",
+          "Accroissement migratoire"
+        ],
+        datasets: [{
+          label: 'Canada',
+          data: canadaRelativeData,
+          fill: true,
+          backgroundColor: canadaColor,
+          borderColor: canadaBorderColor,
+          pointBackgroundColor: canadaBorderColor,
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgb(255, 99, 132)'
+        },
+        {
+          label: 'Chine',
+          data: chinaRelativeData,
+          fill: true,
+          backgroundColor: chinaColor,
+          borderColor: chinaBorderColor,
+          pointBackgroundColor: chinaBorderColor,
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgb(54, 162, 235)'
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            min: 0,
+            max: 120,
+            ticks: {
+              // color: "#C2C2C2"
+              backdropColor: "#000000"
+            },
+            grid: {
+              color: '#515151',
+              width: 1         
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
