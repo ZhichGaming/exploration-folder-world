@@ -53,6 +53,8 @@
       overflow: hidden;
       padding: 5em 10em;
       color: white;
+
+      padding-bottom: 2em;
     }
 
     .general-chart-containinger {
@@ -161,7 +163,7 @@
         <canvas id="general-chart" class="general-chart"></canvas>
        </div>
       <p class="general-description">Graphique de comparaison entre la Chine et le Canada en pourcentage avec le Canada comme référence (100%). </p>
-      <p class="general-subnote">La densité de population de la Chine est incomparablement grand comparé à celui du Canada, le point est en dehors du graphique.</p>
+      <p class="general-subnote">La densité de population de la Chine est incomparablement grand comparé à celui du Canada et l'accroissement naturel est incomparablement négatif, ces points sont en dehors du graphique.</p>
     </div>
     <div class="charts-container">
       <div class="info-card">
@@ -350,8 +352,8 @@
     const chinaRelativeData = [];
 
     function getRelativeData(canada, china) {
-      const maxElement = Math.max(canada[0], china[0]);
-      const minElement = Math.max(Math.min(canada[0], china[0]), 0);
+      // const maxElement = Math.max(canada[0], china[0]);
+      // const minElement = Math.max(Math.min(canada[0], china[0]), 0);
 
       // if (canada[0] > china[0]) {
       //   chinaRelativeData.push((minElement / maxElement).toFixed(2));
@@ -361,7 +363,7 @@
       //   canadaRelativeData.push((minElement / maxElement).toFixed(2));
       // }
       canadaRelativeData.push(100);
-      chinaRelativeData.push((Math.max(china[0] / canada[0], 0) * 100).toFixed(2));
+      chinaRelativeData.push((china[0] / canada[0] * 100).toFixed(2));
     }
 
     console.log(canadaRelativeData);
@@ -416,7 +418,7 @@
         maintainAspectRatio: false,
         scales: {
           r: {
-            min: 0,
+            min: -120,
             max: 120,
             ticks: {
               // color: "#C2C2C2"
