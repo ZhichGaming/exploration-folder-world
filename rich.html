@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      /* background-color: #f0f0f0; */ /* Apparently -1 z-index puts the element beneath the body */
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .hidden {
+      display: none;
+      visibility: hidden;
+    }
+
+    .main-container {
+      /* display: flex; */
+      /* align-items: stretch; */
+      /* justify-content: space-around; */
+      /* flex-flow: row; */
+
+      position: absolute;
+      width: 100%;
+      /* height: 100%; */
+      top: 0;
+      left: 0;
+      z-index: 1;
+      text-align: center;
+      transition: all 1s ease-in-out;
+      background-color: black;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .general-chart-container {
+      overflow: hidden;
+      padding: 5em 10em;
+      color: white;
+
+      padding-bottom: 2em;
+    }
+
+    .general-chart-containinger {
+      position: relative;
+      /* display: flex; */
+      /* width: 100vw; */
+      height: 60vh;
+    }
+
+    /* .general-chart {
+      width: 50vw;
+      height: 50vh;
+    } */
+
+    .general-description {
+      margin-top: 50px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .general-subnote {
+      margin-top: 10px;
+      font-size: small;
+      opacity: 0.7;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .charts-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      padding: 2em 10em;
+    }
+
+    .info-card {
+      margin: 10px;
+      /* width: ; */
+      /* height: 500px; */
+      
+      perspective: 1000px; /* Remove this if you don't want the 3D effect */
+      cursor: pointer;
+    }
+
+    .card-inner {
+      /* margin: 20px; */
+
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+
+      /* display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center; */
+
+      /* position: relative; */
+      display: grid;
+      grid-template-columns: 1fr;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+    }
+
+    /* .info-card:hover {
+      transform: rotateX(10deg) rotateY(10deg);
+    } */
+
+    /* Do an horizontal flip when you move the mouse over the flip box container */
+    .info-card:hover .card-inner {
+      transform: rotateY(10deg);
+    }
+
+    .flipped {
+      transform: rotateY(180deg) !important;
+    }
+
+    .card-front, .card-back {
+      /* position: absolute; */
+
+      grid-row-start: 1;
+      grid-column-start: 1;
+
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden; /* Safari */
+      backface-visibility: hidden;
+    }
+
+    .card-front canvas {
+      padding: 20px;
+      /* background-color: #bbb;
+      color: black; */
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      /* position: absolute;
+      padding: 20px; */
+    }
+
+    .card-back p {
+      padding: 20px;
+    }
+
+    .analysis {
+      padding: 2em 10em;
+    }
+
+    .side {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .img-container {
+      overflow: hidden;
+      width: 100%;
+      height: 300px;
+      border-radius: 5px;
+    }
+
+    .img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .paragraph {
+      padding: 20px;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .light {
+      font-weight: lighter;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div id="main-container" class="main-container">
+    <div class="charts-container">
+      <div class="info-card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>PIB total</h2>
+            <canvas id="PIB"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>PIB total</h2>
+            <p></p>
+          </div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>PIB par habitant</h2>
+            <canvas id="PIBH"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>PIB par habitant</h2>
+            <p></p>
+          </div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>RNB par habitant</h2>
+            <canvas id="RNBH"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>RNB par habitant</h2>
+            <p></p>
+          </div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>Taux de change</h2>
+            <canvas id="exchange"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>Taux de change</h2>
+            <p></p>
+          </div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>Indice Big Mac</h2>
+            <canvas id="bigMac"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>Indice Big Mac</h2>
+            <p></p>
+          </div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>Indice de développement humain</h2>
+            <canvas id="IDH"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>Indice de développement humain</h2>
+            <p></p>
+          </div>
+        </div>
+      </div>
+      <div class="info-card">
+        <div class="card-inner">
+          <div class="card-front">
+            <h2>Indice de Gini</h2>
+            <canvas id="gini"></canvas>
+          </div>
+          <div class="card-back">
+            <h2>Indice de Gini</h2>
+            <p></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="analysis">
+      <hr>
+      <h2 class="subheader">Le pays le plus développé est...</h2>
+      <p class="paragraph">
+<b>...le Canada, car les membres de la population ont de meilleures conditions de vie, il y a moins de disparités de richesses et il possède la meilleure économie. </b><br>
+<br>
+La Chine a un <b>PIB</b> 14 fois plus grand que le Canada, mais ce dernier a un meilleur <b>PIB par habitant</b>, ce qui est un indicateur économique plus comparable, car il prend en compte la taille de la population dans la statistique. Le Canada est le pays le plus développé de cet indicateur, car cet indicateur indique que la valeur des biens et services, donc la richesse produite en une année par habitant, est supérieure. Le <b>RNB par habitant</b>, une donnée représentant le revenu moyen par habitant, est aussi supérieur au Canada d’un degré non négligeable, démontrant que ses citoyens ont un plus grand capital pour se procurer des biens et services. <br>
+<br>
+<b>Le coût d’un Big Mac</b> au Canada est plus cher qu'un Big Mac en Chine, ce qui veut dire qu’un dollar canadien (0,70 $ US) pourra acheter plus en Chine qu’au Canada. L’indice est basé sur le fait qu’un produit devrait avoir la même valeur partout dans le monde, mais le fait que le prix du Big Mac soit plus cher au Canada veut dire que le dollar canadien est surévalué, donc a plus de valeur, comparé au Yuan. Cette surévaluation indique que l’économie canadienne, avec un coût de production et des salaires supérieurs à ceux en Chine, est plus développée. <br>
+<br>
+<b>L’indice de Gini</b> est aussi plus bas au Canada qu’en Chine, ce qui veut dire que la distribution de la richesse dans le pays est plus égale, où en Chine, une plus grande partie de la richesse est détenue par une petite partie de la population. <br>
+<br>
+L’<b>IDH</b> au Canada est plus grand que celui de la Chine, ce qui veut dire que les citoyens du Canada ont une meilleure espérance de vie, un meilleur revenu brut et un plus haut niveau d’éducation, trois facteurs qui sont fortement reliés avec la haute qualité de vie dont les pays développés possèdent. Bien que l’IDH de la Chine n’est pas faible, la valeur de l’indice pour le Canada veut dire qu’une plus grande partie de sa population possède les besoins vitaux, car la nourriture, le logement et les soins de santé sont des facteurs importants qui contribuent à l’espérance de vie à la naissance.<br>
+      </p>
+    </div>
+
+  </div>
+  <script>
+    Chart.register(ChartDataLabels);
+
+    const PIBElement = document.getElementById('PIB');
+    const PIBHElement = document.getElementById('PIBH');
+    const RNBHElement = document.getElementById('RNBH');
+    const exchangeElement = document.getElementById('exchange');
+    const bigMacElement = document.getElementById('bigMac');
+    const IDHElement = document.getElementById('IDH');
+    const giniElement = document.getElementById('gini');
+
+    const chinaColor = 'rgba(255, 99, 132, 0.2)';
+    const canadaColor = 'rgba(54, 162, 235, 0.2)';
+    const chinaBorderColor = 'rgb(255, 99, 132)';
+    const canadaBorderColor = 'rgb(54, 162, 235)';
+
+    const canadaPIB = [2472066660000];
+    const canadaPIBH = [61651.0];
+    const canadaRNBH = [60800];
+    const canadaexchange = [0.70];
+    const canadabigMac = [5.25];
+    const canadaIDH = [0.935];
+    const canadagini = [0.288];
+    
+    const chinaPIB = [34660138180000];
+    const chinaPIBH = [24569.3];
+    const chinaRNBH = [24360];
+    const chinaexchange = [0.14];
+    const chinabigMac = [3.56];
+    const chinaIDH = [0.788];
+    const chinagini = [0.357];
+
+    const PIBLabels = ['PIB total ($ PPA)'];
+    const PIBHLabels = ['PIB par habitant ($ PPA)'];
+    const RNBHLabels = ['RNB par habitant ($ PPA)'];
+    const exchangeLabels = ['Taux de change ($ US)'];
+    const bigMacLabels = ['Indice Big Mac ($ US)'];
+    const IDHLabels = ['Indice de développement humain'];
+    const giniLabels = ['Indice de Gini'];
+
+    const borderWidth = 1;
+
+    function createChart(element, data, labels) {
+      new Chart(element, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Canada (2024)',
+            data: data[0],
+            backgroundColor: [
+              canadaColor,
+            ],
+            borderColor: [
+              canadaBorderColor,
+            ],
+            borderWidth: 1
+          },
+          {
+            label: 'Chine (2024)',
+            data: data[1],
+            backgroundColor: [
+              chinaColor
+            ],
+            borderColor: [
+              chinaBorderColor
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              grid: {
+                color: '#3D3D3D',
+              },
+              ticks: {
+                // color: '#C2C2C2',
+                // backdropColor: '#000000'
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    createChart(PIBElement, [canadaPIB, chinaPIB], PIBLabels);
+    createChart(PIBHElement, [canadaPIBH, chinaPIBH], PIBHLabels);
+    createChart(RNBHElement, [canadaRNBH, chinaRNBH], RNBHLabels);
+    createChart(exchangeElement, [canadaexchange, chinaexchange], exchangeLabels);
+    createChart(bigMacElement, [canadabigMac, chinabigMac], bigMacLabels);
+    createChart(IDHElement, [canadaIDH, chinaIDH], IDHLabels);
+    createChart(giniElement, [canadagini, chinagini], giniLabels);
+
+    const canadaRelativeData = [];
+    const chinaRelativeData = [];
+
+    function getRelativeData(canada, china) {
+      // const maxElement = Math.max(canada[0], china[0]);
+      // const minElement = Math.max(Math.min(canada[0], china[0]), 0);
+
+      // if (canada[0] > china[0]) {
+      //   chinaRelativeData.push((minElement / maxElement).toFixed(2));
+      //   canadaRelativeData.push(1);
+      // } else {
+      //   chinaRelativeData.push(1);
+      //   canadaRelativeData.push((minElement / maxElement).toFixed(2));
+      // }
+      canadaRelativeData.push(100);
+      chinaRelativeData.push((china[0] / canada[0] * 100).toFixed(2));
+    }
+
+    console.log(canadaRelativeData);
+    console.log(chinaRelativeData);
+
+    getRelativeData(canadaPIB, chinaPIB);
+    getRelativeData(canadaPIBH, chinaPIBH);
+    getRelativeData(canadaRNBH, chinaRNBH);
+    getRelativeData(canadaexchange, chinaexchange);
+    getRelativeData(canadabigMac, chinabigMac);
+    getRelativeData(canadaIDH, chinaIDH);
+    getRelativeData(canadagini, chinagini);
+
+    const generalChartElement = document.getElementById('general-chart');
+
+    new Chart(generalChartElement, {
+      type: 'radar',
+      data: {
+        labels: [
+          "PIB total",
+          "PIB par habitant",
+          "RNB par habitant",
+          "Taux de change",
+          "Indice Big Mac",
+          "Indice de développement humain",
+          "Indice de Gini"
+        ],
+        datasets: [{
+          label: 'Canada',
+          data: canadaRelativeData,
+          fill: true,
+          backgroundColor: canadaColor,
+          borderColor: canadaBorderColor,
+          pointBackgroundColor: canadaBorderColor,
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgb(255, 99, 132)'
+        },
+        {
+          label: 'Chine',
+          data: chinaRelativeData,
+          fill: true,
+          backgroundColor: chinaColor,
+          borderColor: chinaBorderColor,
+          pointBackgroundColor: chinaBorderColor,
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgb(54, 162, 235)'
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            min: 0,
+            max: 140,
+            ticks: {
+              // color: "#C2C2C2"
+              backdropColor: "#000000"
+            },
+            grid: {
+              color: '#515151',
+              width: 1         
+            }
+          }
+        }
+      }
+    });
+
+    const infoCards = document.querySelectorAll('.card-inner');
+
+    for (let card of infoCards) {
+      card.addEventListener('click', () => {
+        card.classList.toggle('flipped');
+      });
+    }
+  </script>
+</body>
+</html>
